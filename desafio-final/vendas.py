@@ -92,10 +92,13 @@ if __name__ == "__main__":
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
+            
+            
             cliente_id = int(input("ID do cliente: "))
             pratos = [int(input("ID do prato: "))]
             quantidade = [int(input("Quantidade do prato: "))]
             registrar_pedido(cliente_id, pratos, quantidade)
+            enviar_email_confirmacao()
 
         elif opcao == "2":
             print("Saindo...")

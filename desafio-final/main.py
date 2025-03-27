@@ -1,7 +1,7 @@
 import sqlite3
 from clientes import cadastrar_cliente, listar_clientes, buscar_cliente_por_id
 from gestao import adicionar_prato, listar_pratos, atualizar_prato, gerar_relatorio_vendas, listar_pedidos, alterar_status_pedido
-from vendas import registrar_pedido
+from vendas import registrar_pedido, enviar_email_confirmacao
 from emailsender import enviar_email_cupom
 from dotenv import load_dotenv
 import os
@@ -78,10 +78,54 @@ def menu_atendente():
         opcao = int(input("Escolha uma opção: "))
 
         if opcao == 1:
+
+            #dando print dos usuarios já cadastrados pra poder pegar a ID
+
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+
+            cursor.execute("SELECT * FROM clientes")
+            clientes = cursor.fetchall()
+            conexao.close()
+            print("\nLista de Clientes:")
+            for cliente in clientes:
+                print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
+
+
             cliente_id = int(input("ID do cliente: "))
+
+            # dando print dos pratos que já estão cadastrados
+
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            
+            cursor.execute("SELECT * FROM pratos")
+            pratos = cursor.fetchall()
+            
+            conexao.close()
+            
+            if not pratos:
+                print("Nenhum prato cadastrado.")
+            else:
+                print("Lista de Pratos:")
+                for prato in pratos:
+                    print(f"ID: {prato[0]}, Nome: {prato[1]}, Preço: R$ {prato[2]:.2f}")
+
             pratos = [int(input("ID do prato: "))]
             quantidade = [int(input("Quantidade do prato: "))]
             registrar_pedido(cliente_id, pratos, quantidade)
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            cursor.execute("SELECT email FROM clientes WHERE id = ?", (cliente_id,))
+            resultado = cursor.fetchone()
+            conexao.close()
+
+            if resultado:
+                email_cliente = resultado[0]
+                enviar_email_confirmacao(email_cliente, pratos, quantidade)
+            else:
+                print("Erro: Cliente não encontrado.")
+
 
         elif opcao == 2:
             listar_clientes()
