@@ -28,21 +28,17 @@ def registrar_pedido(cliente_id, pratos, quantidade):
         preco = cursor.fetchone()[0]
         total += preco * qtd
     
-    # Inserindo pedido na tabela 'vendas_pedidos'
+    # Inserindo pedido na tabela 'vendas_pedidos' com status 'pendente'
     cursor.execute('''
         INSERT INTO vendas_pedidos (cliente_id, prato_id, quantidade, total, status)
-        VALUES (?, ?, ?, ?, 'confirmado')
+        VALUES (?, ?, ?, ?, 'pendente')
     ''', (cliente_id, pratos[0], quantidade[0], total))  # Apenas exemplo para 1 prato
 
     conexao.commit()
     conexao.close()
 
-    # Buscar o e-mail do cliente
-    cliente = buscar_cliente_por_id(cliente_id)
-    if cliente:
-        # Enviar e-mail de confirmação
-        enviar_email_confirmacao(cliente[2], pratos, quantidade, total)
-        print(f"Pedido registrado para o cliente {cliente[1]} e e-mail de confirmação enviado!")
+    print(f"Pedido registrado para o cliente {cliente_id} com status 'pendente'.")
+
 
 # Função para enviar e-mail de confirmação
 def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):

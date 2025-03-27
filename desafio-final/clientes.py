@@ -1,12 +1,13 @@
 import sqlite3
 import re
 
+# Função para validar o e-mail
 def validar_email(email):
     padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(padrao, email) is not None
 
-# Função para cadastrar um novo cliente
-def cadastrar_cliente(nome, email, senha):
+# Função para cadastrar cliente
+def cadastrar_cliente(nome, email):
     if not validar_email(email):
         print("E-mail inválido!")
         return
@@ -15,7 +16,7 @@ def cadastrar_cliente(nome, email, senha):
     cursor = conexao.cursor()
 
     try:
-        cursor.execute("INSERT INTO clientes (nome, email, senha) VALUES (?, ?, ?)", (nome, email, senha))
+        cursor.execute("INSERT INTO clientes (nome, email) VALUES (?, ?)", (nome, email,))
         conexao.commit()
         print(f"Cliente '{nome}' cadastrado com sucesso!")
     except sqlite3.IntegrityError:

@@ -55,7 +55,7 @@ def menu_gestor():
 
 def menu_atendente():
     while True:
-        print("\n1. Registrar Pedido\n2. Listar Clientes\n3. Cadastrar cliente\n4. Sair")
+        print("\n1. Registrar Pedido\n2. Listar Clientes\n3. Cadastrar cliente\n4. Listar pratos\n5. Sair")
         opcao = int(input("Escolha uma opção: "))
 
         if opcao == 1:
@@ -68,15 +68,23 @@ def menu_atendente():
             listar_clientes()
         
         elif opcao == 3:
-            
-            cadastrar_cliente()
+            # Solicitar dados para o cadastro
+            nome = input("Nome do cliente: ")
+            email = input("E-mail do cliente: ")
 
-        elif opcao == "4":
+            # Passando os dados para a função cadastrar_cliente
+            cadastrar_cliente(nome, email)
+
+        elif opcao == 4:
+            listar_pratos()
+
+        elif opcao == 5:
             print("Saindo...")
             break
 
         else:
             print("Opção inválida!")
+
 
 if __name__ == "__main__":
     while True:
