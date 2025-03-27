@@ -5,12 +5,12 @@ from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 import os
 
+# Carrega as variáveis do arquivo .env
 load_dotenv()
 
+# Carregar as variáveis de ambiente
 user_email = os.getenv('USER_EMAIL')
 user_password = os.getenv('USER_PASSWORD')
-
-
 
 # Função para enviar um e-mail
 def enviar_email(remetente, senha, destinatario, assunto, corpo):
@@ -62,8 +62,8 @@ def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
 # Função para enviar cupom de desconto
 def enviar_email_cupom(email_cliente, cupom_codigo):
     # Configurações de envio de e-mail
-    email_remetente = "seuemail@dominio.com"
-    senha_remetente = "sua_senha"
+    email_remetente = user_email  # Usando a variável de ambiente para o e-mail
+    senha_remetente = user_password  # Usando a variável de ambiente para a senha
     
     assunto = "Cupom de Desconto Exclusivo"
     corpo = f"""
