@@ -71,6 +71,8 @@ def enviar_email_confirmacao(email_cliente, pratos, quantidades, total):
     except Exception as e:
         print(f"Erro ao enviar o e-mail: {e}")
 
+
+'''
 if __name__ == "__main__":
     while True:
         print("\n1. Registrar Pedido\n2. Sair")
@@ -131,3 +133,4 @@ if __name__ == "__main__":
 
         else:
             print("Opção inválida!")
+        '''

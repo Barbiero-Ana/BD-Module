@@ -1,4 +1,7 @@
 import sqlite3
+from emailsender import enviar_email_confirmacao
+
+
 
 # Funções de gerenciamento de pratos
 def adicionar_prato(nome, preco):
@@ -153,7 +156,6 @@ if __name__ == "__main__":
             print("Opção inválida!")
 
 
-
 def listar_pedidos():
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
@@ -176,6 +178,9 @@ def alterar_status_pedido():
         print("Status inválido! Os valores válidos são: 'pendente', 'pronto', 'entregue', 'em atraso'.")
         return
     
+    if novo_status == "pronto".lower():
+        enviar_email_confirmacao()
+        
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
     

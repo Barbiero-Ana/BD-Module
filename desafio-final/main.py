@@ -125,7 +125,7 @@ def menu_atendente():
             total_pedido = 0
 
             while True:
-                prato_id = input("\nDigite o ID do prato escolhido (ou ENTER para finalizar): ").strip()
+                prato_id = input("\nAperte enter para confirmar").strip()
                 if not prato_id:
                     break  
 
