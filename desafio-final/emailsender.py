@@ -2,6 +2,16 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+user_email = os.getenv('USER_EMAIL')
+user_password = os.getenv('USER_PASSWORD')
+
+
+
 # Função para enviar um e-mail
 def enviar_email(remetente, senha, destinatario, assunto, corpo):
     try:
@@ -31,8 +41,8 @@ def enviar_email(remetente, senha, destinatario, assunto, corpo):
 # Função específica para enviar e-mail de confirmação de pedido
 def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
     # Configurações de envio de e-mail
-    email_remetente = "seuemail@dominio.com"
-    senha_remetente = "sua_senha"
+    email_remetente = user_email
+    senha_remetente = user_password
     
     assunto = "Confirmação de Pedido"
     corpo = f"""
