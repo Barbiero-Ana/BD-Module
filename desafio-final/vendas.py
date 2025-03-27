@@ -66,10 +66,19 @@ def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
     Pratos solicitados:
     """
     
-    for prato, quantid in zip(pratos, quantidade):
-        corpo_email += f"Prato ID: {prato} | Quantidade: {quantid}\n"
-    
-    corpo_email += f"\nTotal: R$ {total:.2f}\n\nAguarde a confirmação do status de entrega.\n\nObrigado por escolher nosso restaurante!"
+    conexao = sqlite3.connect("restaurante.db")
+    cursor = conexao.cursor()
+
+    for prato_id, quantid in zip(pratos, quantidade):
+        cursor.execute("SELECT nome FROM pratos WHERE id = ?", (prato_id,))
+        resultado = cursor.fetchone()
+        if resultado:
+            nome_prato = resultado[0]
+            corpo_email += f"{nome_prato} | Quantidade: {quantid}\n"
+        else:
+            corpo_email += f"ID desconhecido ({prato_id}) | Quantidade: {quantid}\n"
+
+    conexao.close()
 
     mensagem.attach(MIMEText(corpo_email, 'plain'))
 
