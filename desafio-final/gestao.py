@@ -77,10 +77,6 @@ def gerar_relatorio_vendas():
 
 
 
-
-
-
-
 # Funções de relatório de vendas
 def relatorio_vendas_diarias():
     conexao = sqlite3.connect("restaurante.db")
