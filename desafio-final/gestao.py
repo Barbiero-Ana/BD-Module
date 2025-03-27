@@ -40,8 +40,6 @@ def atualizar_prato(prato_id, novo_nome=None, novo_preco=None):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    if novo_nome:
-        cursor.execute("UPDATE pratos SET nome = ? WHERE id = ?", (novo_nome, prato_id))
     if novo_preco:
         cursor.execute("UPDATE pratos SET preco = ? WHERE id = ?", (novo_preco, prato_id))
 

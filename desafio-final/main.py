@@ -74,79 +74,89 @@ def menu_gestor():
 
 def menu_atendente():
     while True:
-        print("\n1. Registrar Pedido\n2. Listar Clientes\n3. Cadastrar cliente\n4. Listar pratos\n5. Sair")
+        print("\n1. Registrar Pedido\n2. Listar Clientes\n3. Cadastrar Cliente\n4. Listar Pratos\n5. Sair")
         opcao = int(input("Escolha uma opção: "))
 
         if opcao == 1:
-
-            #dando print dos usuarios já cadastrados pra poder pegar a ID
-
+            # Listar clientes
             conexao = sqlite3.connect("restaurante.db")
             cursor = conexao.cursor()
-
             cursor.execute("SELECT * FROM clientes")
             clientes = cursor.fetchall()
             conexao.close()
+
             print("\nLista de Clientes:")
             for cliente in clientes:
                 print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
 
-
             cliente_id = int(input("\nID do cliente: "))
 
-            # dando print dos pratos que já estão cadastrados
-
-            conexao = sqlite3.connect("restaurante.db")
-            cursor = conexao.cursor()
-            
-            cursor.execute("SELECT * FROM pratos")
-            pratos = cursor.fetchall()
-            
-            conexao.close()
-            
-            if not pratos:
-                print("Nenhum prato cadastrado.")
-            else:
-                print("Lista de Pratos:")
-                for prato in pratos:
-                    print(f"ID: {prato[0]}, Nome: {prato[1]}, Preço: R$ {prato[2]:.2f}")
-
-            pratos = [int(input("\nID do prato: "))]
-            quantidade = [int(input("Quantidade do prato: "))]
-            registrar_pedido(cliente_id, pratos, quantidade)
+            # Buscar e-mail do cliente
             conexao = sqlite3.connect("restaurante.db")
             cursor = conexao.cursor()
             cursor.execute("SELECT email FROM clientes WHERE id = ?", (cliente_id,))
             resultado = cursor.fetchone()
             conexao.close()
 
-            if resultado:
-                email_cliente = resultado[0]
-                
-                # Calcular o valor total do pedido
-                conexao = sqlite3.connect("restaurante.db")
-                cursor = conexao.cursor()
-                cursor.execute("SELECT preco FROM pratos WHERE id = ?", (pratos[0],))
-                preco_prato = cursor.fetchone()
-                conexao.close()
-
-                if preco_prato:
-                    total = preco_prato[0] * quantidade[0]
-                else:
-                    total = 0
-                    
-                enviar_email_confirmacao(email_cliente, pratos, quantidade, total)
-            else:
+            if not resultado:
                 print("Erro: Cliente não encontrado.")
+                continue  
+
+            email_cliente = resultado[0]
+
+            # Listar pratos cadastrados
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            cursor.execute("SELECT * FROM pratos")
+            pratos_disponiveis = cursor.fetchall()
+            conexao.close()
+
+            if not pratos_disponiveis:
+                print("Nenhum prato cadastrado.")
+                continue  
+
+            print("\nLista de Pratos:")
+            for prato in pratos_disponiveis:
+                print(f"ID: {prato[0]} | Nome: {prato[1]} | Preço: R$ {prato[2]:.2f}")
+
+            # Registrar os pratos do pedido
+            pratos = []
+            quantidades = []
+            total_pedido = 0
+
+            while True:
+                prato_id = input("\nDigite o ID do prato escolhido (ou ENTER para finalizar): ").strip()
+                if not prato_id:
+                    break  
+
+                prato_id = int(prato_id)
+                quantidade = int(input("Quantidade do prato: "))
+
+                for prato in pratos_disponiveis:
+                    if prato[0] == prato_id:
+                        pratos.append(prato[1])  # Nome do prato
+                        quantidades.append(quantidade)
+                        total_pedido += prato[2] * quantidade
+                        break
+                else:
+                    print("Prato não encontrado.")
+
+            if not pratos:
+                print("Nenhum prato selecionado. Pedido cancelado.")
+                continue  
+
+            # Registrar pedido no banco
+            registrar_pedido(cliente_id, pratos, quantidades)
+
+            # Enviar e-mail de confirmação
+            enviar_email_confirmacao(email_cliente, pratos, quantidades, total_pedido)
 
         elif opcao == 2:
             listar_clientes()
-        
+
         elif opcao == 3:
             nome = input("Nome do cliente: ")
             email = input("E-mail do cliente: ")
-
-            # ACHEI O MALDITO ERRO
             cadastrar_cliente(nome, email)
 
         elif opcao == 4:
