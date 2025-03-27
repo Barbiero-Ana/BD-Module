@@ -92,7 +92,7 @@ def menu_atendente():
                 print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
 
 
-            cliente_id = int(input("ID do cliente: "))
+            cliente_id = int(input("\nID do cliente: "))
 
             # dando print dos pratos que já estão cadastrados
 
@@ -111,7 +111,7 @@ def menu_atendente():
                 for prato in pratos:
                     print(f"ID: {prato[0]}, Nome: {prato[1]}, Preço: R$ {prato[2]:.2f}")
 
-            pratos = [int(input("ID do prato: "))]
+            pratos = [int(input("\nID do prato: "))]
             quantidade = [int(input("Quantidade do prato: "))]
             registrar_pedido(cliente_id, pratos, quantidade)
             conexao = sqlite3.connect("restaurante.db")
@@ -122,10 +122,22 @@ def menu_atendente():
 
             if resultado:
                 email_cliente = resultado[0]
-                enviar_email_confirmacao(email_cliente, pratos, quantidade)
+                
+                # Calcular o valor total do pedido
+                conexao = sqlite3.connect("restaurante.db")
+                cursor = conexao.cursor()
+                cursor.execute("SELECT preco FROM pratos WHERE id = ?", (pratos[0],))
+                preco_prato = cursor.fetchone()
+                conexao.close()
+
+                if preco_prato:
+                    total = preco_prato[0] * quantidade[0]
+                else:
+                    total = 0
+                    
+                enviar_email_confirmacao(email_cliente, pratos, quantidade, total)
             else:
                 print("Erro: Cliente não encontrado.")
-
 
         elif opcao == 2:
             listar_clientes()
