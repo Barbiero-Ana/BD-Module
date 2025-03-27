@@ -3,6 +3,19 @@ from clientes import cadastrar_cliente, listar_clientes, buscar_cliente_por_id
 from gestao import adicionar_prato, listar_pratos, atualizar_prato, gerar_relatorio_vendas, listar_pedidos, alterar_status_pedido
 from vendas import registrar_pedido
 from emailsender import enviar_email_cupom
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
+senha_gestor = os.getenv('SENHA_GESTOR')
+senha_atendente = os.getenv('SENHA_ATENDENTE')
+
+
+
+
+
 
 # Função de login (gerente ou atendente)
 def login():
@@ -10,9 +23,9 @@ def login():
     usuario = input("Usuário: ")
     senha = input("Senha: ")
     
-    if usuario == "gestor" and senha == "gestor123":
+    if usuario == "gestor" and senha == senha_gestor:
         return "gestor"
-    elif usuario == "atendente" and senha == "atendente123":
+    elif usuario == "atendente" and senha == senha_atendente:
         return "atendente"
     else:
         print("Credenciais inválidas. Tente novamente.")
