@@ -3,20 +3,20 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-# Função para buscar o cliente pelo ID no banco de dados
+
 def buscar_cliente_por_id(cliente_id):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    # Consultando o banco para obter os dados do cliente
+    
     cursor.execute("SELECT * FROM clientes WHERE id = ?", (cliente_id,))
     cliente = cursor.fetchone()
 
     conexao.close()
 
-    return cliente  # Retorna o cliente ou None se não encontrar
+    return cliente  
 
-# Função para registrar um pedido
+
 def registrar_pedido(cliente_id, pratos, quantidade):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
@@ -28,7 +28,7 @@ def registrar_pedido(cliente_id, pratos, quantidade):
         preco = cursor.fetchone()[0]
         total += preco * qtd
     
-    # Inserindo pedido na tabela 'vendas_pedidos' com status 'pendente'
+    
     cursor.execute('''
         INSERT INTO vendas_pedidos (cliente_id, prato_id, quantidade, total, status)
         VALUES (?, ?, ?, ?, 'pendente')
@@ -42,7 +42,6 @@ def registrar_pedido(cliente_id, pratos, quantidade):
 
 # Função para enviar e-mail de confirmação
 def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
-    # Configurações de envio de e-mail
     email_remetente = "seuemail@dominio.com"
     senha_remetente = "sua_senha"
     smtp_server = "smtp.gmail.com"
@@ -68,12 +67,12 @@ def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
     mensagem.attach(MIMEText(corpo_email, 'plain'))
 
     try:
-        # Estabelecendo a conexão com o servidor SMTP
+
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
         server.login(email_remetente, senha_remetente)
 
-        # Enviando o e-mail
+        
         server.sendmail(email_remetente, email_cliente, mensagem.as_string())
         server.quit()
         print("E-mail de confirmação enviado com sucesso!")

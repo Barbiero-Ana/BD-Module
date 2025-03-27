@@ -1,0 +1,1 @@
+# Para utilizar as credenciais utilize um arquivo .env e coloque as informacoes pessoais
