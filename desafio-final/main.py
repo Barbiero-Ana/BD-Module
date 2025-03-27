@@ -74,11 +74,10 @@ def menu_atendente():
             listar_clientes()
         
         elif opcao == 3:
-            # Solicitar dados para o cadastro
             nome = input("Nome do cliente: ")
             email = input("E-mail do cliente: ")
 
-            # Passando os dados para a função cadastrar_cliente
+            # ACHEI O MALDITO ERRO
             cadastrar_cliente(nome, email)
 
         elif opcao == 4:
