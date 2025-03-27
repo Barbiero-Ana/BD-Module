@@ -1,6 +1,6 @@
 import sqlite3
 from clientes import cadastrar_cliente, listar_clientes, buscar_cliente_por_id
-from gestao import adicionar_prato, listar_pratos, atualizar_prato, gerar_relatorio_vendas
+from gestao import adicionar_prato, listar_pratos, atualizar_prato, gerar_relatorio_vendas, listar_pedidos, alterar_status_pedido
 from vendas import registrar_pedido
 from emailsender import enviar_email_cupom
 
@@ -20,7 +20,7 @@ def login():
 
 def menu_gestor():
     while True:
-        print("\n1. Adicionar Prato\n2. Listar Pratos\n3. Atualizar Preço do Prato\n4. Gerar Relatório de Vendas\n5. Enviar Cupom de Desconto\n6. Sair")
+        print("\n1. Adicionar Prato\n2. Listar Pratos\n3. Atualizar Preço do Prato\n4. Gerar Relatório de Vendas\n5. Enviar Cupom de Desconto\n6. Listar Pedidos\n7. Alterar Status de Pedido\n8. Sair")
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
@@ -47,6 +47,12 @@ def menu_gestor():
                 enviar_email_cupom(cliente[2], cupom_codigo)
 
         elif opcao == "6":
+            listar_pedidos()
+
+        elif opcao == "7":
+            alterar_status_pedido()
+
+        elif opcao == "8":
             print("Saindo...")
             break
 

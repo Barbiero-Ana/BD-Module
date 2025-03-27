@@ -153,3 +153,40 @@ if __name__ == "__main__":
 
         else:
             print("Opção inválida!")
+
+
+
+def listar_pedidos():
+    conexao = sqlite3.connect("restaurante.db")
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id, cliente_id, total, status FROM vendas_pedidos")
+    pedidos = cursor.fetchall()
+    if pedidos:
+        print("\nPedidos registrados:")
+        for pedido in pedidos:
+            print(f"ID: {pedido[0]} | Cliente ID: {pedido[1]} | Total: R$ {pedido[2]:.2f} | Status: {pedido[3]}")
+    else:
+        print("Nenhum pedido registrado.")
+    conexao.close()
+
+def alterar_status_pedido():
+    listar_pedidos()
+    pedido_id = int(input("\nDigite o ID do pedido para alterar o status: "))
+    novo_status = input("Digite o novo status do pedido (pendente, pronto, entregue, em atraso): ").lower()
+    
+    if novo_status not in ['pendente', 'pronto', 'entregue', 'em atraso']:
+        print("Status inválido! Os valores válidos são: 'pendente', 'pronto', 'entregue', 'em atraso'.")
+        return
+    
+    conexao = sqlite3.connect("restaurante.db")
+    cursor = conexao.cursor()
+    
+    cursor.execute("UPDATE vendas_pedidos SET status = ? WHERE id = ?", (novo_status, pedido_id))
+    
+    if cursor.rowcount > 0:
+        conexao.commit()
+        print(f"Status do pedido {pedido_id} alterado para '{novo_status}'.")
+    else:
+        print("Pedido não encontrado.")
+    
+    conexao.close()
