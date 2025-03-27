@@ -2,7 +2,13 @@ import sqlite3
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+user_email = os.getenv('USER_EMAIL')
+user_password = os.getenv('USER_PASSWORD')
 
 def buscar_cliente_por_id(cliente_id):
     conexao = sqlite3.connect("restaurante.db")
@@ -40,10 +46,11 @@ def registrar_pedido(cliente_id, pratos, quantidade):
     print(f"Pedido registrado para o cliente {cliente_id} com status 'pendente'.")
 
 
-# Função para enviar e-mail de confirmação
+# enviar o maldito email de confirmacao - que funcione plmds
+
 def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
-    email_remetente = "seuemail@dominio.com"
-    senha_remetente = "sua_senha"
+    email_remetente = user_email
+    senha_remetente = user_password
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
 
@@ -59,8 +66,8 @@ def enviar_email_confirmacao(email_cliente, pratos, quantidade, total):
     Pratos solicitados:
     """
     
-    for p, q in zip(pratos, quantidade):
-        corpo_email += f"Prato ID: {p} | Quantidade: {q}\n"
+    for prato, quantid in zip(pratos, quantidade):
+        corpo_email += f"Prato ID: {prato} | Quantidade: {quantid}\n"
     
     corpo_email += f"\nTotal: R$ {total:.2f}\n\nAguarde a confirmação do status de entrega.\n\nObrigado por escolher nosso restaurante!"
 
