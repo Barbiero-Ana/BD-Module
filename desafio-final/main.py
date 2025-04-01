@@ -91,7 +91,7 @@ def menu_gestor():
             print("\nLista de Pratos:")
             for prato in pratos_disponiveis:
                 print(f"ID: {prato[0]} | Nome: {prato[1]} | Preço: R$ {prato[2]:.2f}")
-                
+
             try:
                 prato_id = int(input("Digite o ID do prato a ser excluído: "))
                 excluir_prato(prato_id)
@@ -124,7 +124,7 @@ def menu_atendente():
 
             cliente_id = int(input("\nID do cliente: "))
 
-            # Buscar e-mail do cliente
+            # busca o email do cliente
             conexao = sqlite3.connect("restaurante.db")
             cursor = conexao.cursor()
             cursor.execute("SELECT email FROM clientes WHERE id = ?", (cliente_id,))
@@ -137,7 +137,7 @@ def menu_atendente():
 
             email_cliente = resultado[0]
 
-            # Listar pratos cadastrados
+            
             conexao = sqlite3.connect("restaurante.db")
             cursor = conexao.cursor()
             cursor.execute("SELECT * FROM pratos")
@@ -152,7 +152,7 @@ def menu_atendente():
             for prato in pratos_disponiveis:
                 print(f"ID: {prato[0]} | Nome: {prato[1]} | Preço: R$ {prato[2]:.2f}")
 
-            # Registrar os pratos do pedido
+            
             pratos = []
             quantidades = []
             total_pedido = 0
@@ -167,7 +167,7 @@ def menu_atendente():
 
                 for prato in pratos_disponiveis:
                     if prato[0] == prato_id:
-                        pratos.append(prato[1])  # Nome do prato
+                        pratos.append(prato[1])  
                         quantidades.append(quantidade)
                         total_pedido += prato[2] * quantidade
                         break
@@ -178,10 +178,10 @@ def menu_atendente():
                 print("Nenhum prato selecionado. Pedido cancelado.")
                 continue  
 
-            # Registrar pedido no banco
+            
             registrar_pedido(cliente_id, pratos, quantidades)
 
-            # Enviar e-mail de confirmação
+            # Enviar email de confirmacao ao receber o status como pronto
             enviar_email_confirmacao(email_cliente, pratos, quantidades, total_pedido)
 
         elif opcao == 2:

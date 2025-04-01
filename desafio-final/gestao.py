@@ -3,7 +3,7 @@ from emailsender import enviar_email_confirmacao
 
 
 
-# Funções de gerenciamento de pratos
+
 def adicionar_prato(nome, preco):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
@@ -77,7 +77,6 @@ def gerar_relatorio_vendas():
 
 
 
-# Funções de relatório de vendas
 def relatorio_vendas_diarias():
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
