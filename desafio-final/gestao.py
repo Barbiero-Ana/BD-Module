@@ -167,7 +167,7 @@ def listar_pedidos():
 def alterar_status_pedido():
     pedido_id = input("Digite o ID do pedido para alterar o status: ")
     
-    # Verificar se o pedido_id é um número válido
+
     try:
         pedido_id = int(pedido_id)
     except ValueError:
@@ -176,11 +176,10 @@ def alterar_status_pedido():
     
     print(f"ID do pedido informado: {pedido_id}")
 
-    # Conectar ao banco de dados
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    # Consulta SQL para buscar os dados do pedido, incluindo o nome do prato
+    # Consulta SQL 
     consulta_sql = """
         SELECT vp.id, c.nome, c.email, p.nome, vp.quantidade, vp.total, vp.status
         FROM vendas_pedidos vp
@@ -193,7 +192,7 @@ def alterar_status_pedido():
     
     if not resultado:
         print(f"Pedido com ID {pedido_id} não encontrado.")
-        # Adicionar depuração para verificar o problema
+        # depuracao
         cursor.execute("SELECT id, cliente_id, prato_id, quantidade, total, status FROM vendas_pedidos WHERE id = ?", (pedido_id,))
         pedido = cursor.fetchone()
         if pedido:
@@ -207,19 +206,19 @@ def alterar_status_pedido():
         conexao.close()
         return
 
-    # Desempacotar os valores (nome do prato vem diretamente da consulta)
+    # Desempacotar 
     id_pedido, nome_cliente, email_cliente, nome_prato, quantidade, total, status = resultado
     print(f"Pedido encontrado: {nome_cliente} pediu {quantidade} de {nome_prato} (Status atual: {status})")
 
     novo_status = input("Digite o novo status (pendente, preparando, pronto, entregue): ")
 
-    # Validar novo status
+    # NOVO STATUS
     if novo_status not in ['pendente', 'preparando', 'pronto', 'entregue']:
         print("Status inválido. Use um dos seguintes: 'pendente', 'preparando', 'pronto', 'entregue'.")
         conexao.close()
         return
     
-    # Atualizar status do pedido
+    # att o status do pedido
     cursor.execute("""
         UPDATE vendas_pedidos
         SET status = ?
