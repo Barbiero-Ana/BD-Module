@@ -167,34 +167,51 @@ def alterar_status_pedido():
     listar_pedidos()
     pedido_id = int(input("\nDigite o ID do pedido para alterar o status: "))
     novo_status = input("Digite o novo status do pedido (pendente, pronto, entregue, em atraso): ").lower()
-    
+
     if novo_status not in ['pendente', 'pronto', 'entregue', 'em atraso']:
         print("Status inválido! Os valores válidos são: 'pendente', 'pronto', 'entregue', 'em atraso'.")
         return
-    
+
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    # Buscar detalhes do pedido
-    cursor.execute("SELECT email_cliente, pratos, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
+    # 1️⃣ Buscar o cliente_id do pedido
+    cursor.execute("SELECT cliente_id, pratos, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
     pedido = cursor.fetchone()
 
-    if pedido is None:
-        print("Pedido não encontrado.")
+    if not pedido:
+        print("Erro: Pedido não encontrado.")
         conexao.close()
         return
 
-    email_cliente, pratos, quantidade, total = pedido
+    cliente_id, pratos, quantidade, total = pedido
 
+    # 2️⃣ Buscar o e-mail do cliente usando o cliente_id
+    cursor.execute("SELECT email FROM clientes WHERE id = ?", (cliente_id,))
+    resultado = cursor.fetchone()
+
+    conexao.close()
+
+    if not resultado:
+        print("Erro: Cliente não encontrado.")
+        return  
+
+    email_cliente = resultado[0]
+
+    # 3️⃣ Se o status for 'pronto', enviar o e-mail
     if novo_status == "pronto":
         enviar_email_confirmacao(email_cliente, pratos, quantidade, total)
-    
+
+    # Atualizar status do pedido
+    conexao = sqlite3.connect("restaurante.db")
+    cursor = conexao.cursor()
     cursor.execute("UPDATE vendas_pedidos SET status = ? WHERE id = ?", (novo_status, pedido_id))
-    
+
     if cursor.rowcount > 0:
         conexao.commit()
         print(f"Status do pedido {pedido_id} alterado para '{novo_status}'.")
     else:
         print("Erro ao atualizar o status do pedido.")
-    
+
     conexao.close()
+

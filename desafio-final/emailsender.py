@@ -60,7 +60,7 @@ def enviar_email_cupom(email_cliente, cupom_codigo):
     Utilize-o em sua próxima compra. Aproveite e bom apetite!
 
     Atenciosamente,
-    Restaurante X
+    Restaurante Cyber
     """
     
     enviar_email(email_remetente, senha_remetente, email_cliente, assunto, corpo)
