@@ -163,56 +163,77 @@ def listar_pedidos():
         print("Nenhum pedido registrado.")
     conexao.close()
 
+
 def alterar_status_pedido():
-    listar_pedidos()
-    pedido_id = int(input("\nDigite o ID do pedido para alterar o status: "))
-    novo_status = input("Digite o novo status do pedido (pendente, pronto, entregue, em atraso): ").lower()
-
-    if novo_status not in ['pendente', 'pronto', 'entregue', 'em atraso']:
-        print("Status inválido! Os valores válidos são: 'pendente', 'pronto', 'entregue', 'em atraso'.")
+    pedido_id = input("Digite o ID do pedido para alterar o status: ")
+    
+    # Verificar se o pedido_id é um número válido
+    try:
+        pedido_id = int(pedido_id)
+    except ValueError:
+        print("ID inválido, por favor insira um número.")
         return
+    
+    print(f"ID do pedido informado: {pedido_id}")
 
+    # Conectar ao banco de dados
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    # 1️⃣ Buscar o cliente_id do pedido
-    cursor.execute("SELECT cliente_id, prato_id, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
-
-    pedido = cursor.fetchone()
-
-    if not pedido:
-        print("Erro: Pedido não encontrado.")
+    # Consulta SQL para buscar os dados do pedido, incluindo o nome do prato
+    consulta_sql = """
+        SELECT vp.id, c.nome, c.email, p.nome, vp.quantidade, vp.total, vp.status
+        FROM vendas_pedidos vp
+        JOIN clientes c ON vp.cliente_id = c.id
+        JOIN pratos p ON vp.prato_id = p.id
+        WHERE vp.id = ?
+    """
+    cursor.execute(consulta_sql, (pedido_id,))
+    resultado = cursor.fetchone()
+    
+    if not resultado:
+        print(f"Pedido com ID {pedido_id} não encontrado.")
+        # Adicionar depuração para verificar o problema
+        cursor.execute("SELECT id, cliente_id, prato_id, quantidade, total, status FROM vendas_pedidos WHERE id = ?", (pedido_id,))
+        pedido = cursor.fetchone()
+        if pedido:
+            print(f"Pedido encontrado diretamente: {pedido}")
+            cursor.execute("SELECT id, nome FROM clientes WHERE id = ?", (pedido[1],))
+            print(f"Cliente: {cursor.fetchone()}")
+            cursor.execute("SELECT id, nome FROM pratos WHERE id = ?", (pedido[2],))
+            print(f"Prato: {cursor.fetchone()}")
+        else:
+            print("Pedido não existe na tabela vendas_pedidos.")
         conexao.close()
         return
 
-    cliente_id, pratos, quantidade, total = pedido
+    # Desempacotar os valores (nome do prato vem diretamente da consulta)
+    id_pedido, nome_cliente, email_cliente, nome_prato, quantidade, total, status = resultado
+    print(f"Pedido encontrado: {nome_cliente} pediu {quantidade} de {nome_prato} (Status atual: {status})")
 
-    # 2️⃣ Buscar o e-mail do cliente usando o cliente_id
-    cursor.execute("SELECT email FROM clientes WHERE id = ?", (cliente_id,))
-    resultado = cursor.fetchone()
+    novo_status = input("Digite o novo status (pendente, preparando, pronto, entregue): ")
 
-    conexao.close()
-
-    if not resultado:
-        print("Erro: Cliente não encontrado.")
-        return  
-
-    email_cliente = resultado[0]
-
-    # 3️⃣ Se o status for 'pronto', enviar o e-mail
-    if novo_status == "pronto":
-        enviar_email_confirmacao(email_cliente, pratos, quantidade, total)
-
+    # Validar novo status
+    if novo_status not in ['pendente', 'preparando', 'pronto', 'entregue']:
+        print("Status inválido. Use um dos seguintes: 'pendente', 'preparando', 'pronto', 'entregue'.")
+        conexao.close()
+        return
+    
     # Atualizar status do pedido
-    conexao = sqlite3.connect("restaurante.db")
-    cursor = conexao.cursor()
-    cursor.execute("UPDATE vendas_pedidos SET status = ? WHERE id = ?", (novo_status, pedido_id))
-
-    if cursor.rowcount > 0:
-        conexao.commit()
-        print(f"Status do pedido {pedido_id} alterado para '{novo_status}'.")
+    cursor.execute("""
+        UPDATE vendas_pedidos
+        SET status = ?
+        WHERE id = ?
+    """, (novo_status, pedido_id))
+    
+    if cursor.rowcount == 0:
+        print(f"Erro: Nenhum pedido com ID {pedido_id} foi atualizado.")
     else:
-        print("Erro ao atualizar o status do pedido.")
-
+        conexao.commit()
+        try:
+            enviar_email_confirmacao(email_cliente, [nome_prato], [quantidade], total)
+            print(f"Status do pedido {pedido_id} alterado para '{novo_status}' com sucesso!")
+        except Exception as e:
+            print(f"Status alterado, mas falha ao enviar e-mail: {e}")
+    
     conexao.close()
-
