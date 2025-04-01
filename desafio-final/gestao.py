@@ -172,11 +172,22 @@ def alterar_status_pedido():
         print("Status inválido! Os valores válidos são: 'pendente', 'pronto', 'entregue', 'em atraso'.")
         return
     
-    if novo_status == "pronto".lower():
-        enviar_email_confirmacao()
-        
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
+
+    # Buscar detalhes do pedido
+    cursor.execute("SELECT email_cliente, pratos, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
+    pedido = cursor.fetchone()
+
+    if pedido is None:
+        print("Pedido não encontrado.")
+        conexao.close()
+        return
+
+    email_cliente, pratos, quantidade, total = pedido
+
+    if novo_status == "pronto":
+        enviar_email_confirmacao(email_cliente, pratos, quantidade, total)
     
     cursor.execute("UPDATE vendas_pedidos SET status = ? WHERE id = ?", (novo_status, pedido_id))
     
@@ -184,6 +195,6 @@ def alterar_status_pedido():
         conexao.commit()
         print(f"Status do pedido {pedido_id} alterado para '{novo_status}'.")
     else:
-        print("Pedido não encontrado.")
+        print("Erro ao atualizar o status do pedido.")
     
     conexao.close()
