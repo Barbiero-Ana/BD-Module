@@ -77,7 +77,26 @@ def menu_gestor():
             alterar_status_pedido()
 
         elif opcao == 8:
-            excluir_prato(prato_id)
+            # Listar pratos cadastrados
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            cursor.execute("SELECT * FROM pratos")
+            pratos_disponiveis = cursor.fetchall()
+            conexao.close()
+
+            if not pratos_disponiveis:
+                print("Nenhum prato cadastrado.")
+                continue  
+
+            print("\nLista de Pratos:")
+            for prato in pratos_disponiveis:
+                print(f"ID: {prato[0]} | Nome: {prato[1]} | Preço: R$ {prato[2]:.2f}")
+                
+            try:
+                prato_id = int(input("Digite o ID do prato a ser excluído: "))
+                excluir_prato(prato_id)
+            except ValueError:
+                print("Erro: Digite um número válido para o ID do prato.")
 
         elif opcao == 9:
             print("Saindo...")
