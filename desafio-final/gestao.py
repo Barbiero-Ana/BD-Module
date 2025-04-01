@@ -39,7 +39,7 @@ def listar_pratos():
         for prato in pratos:
             print(f"ID: {prato[0]}, Nome: {prato[1]}, Preço: R$ {prato[2]:.2f}")
 
-def atualizar_prato(prato_id, novo_nome=None, novo_preco=None):
+def atualizar_prato(prato_id, novo_preco=None):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
@@ -131,13 +131,11 @@ if __name__ == "__main__":
 
         elif opcao == "3":
             prato_id = int(input("ID do prato a ser atualizado: "))
-            novo_nome = input("Novo nome (ou deixe vazio para não alterar): ")
             novo_preco = input("Novo preço (ou deixe vazio para não alterar): ")
 
             if novo_preco:
                 novo_preco = float(novo_preco)
-            atualizar_prato(prato_id, novo_nome if novo_nome else None, novo_preco if novo_preco else None)
-
+            atualizar_prato(prato_id, novo_preco if novo_preco else None)
         elif opcao == "4":
             relatorio_vendas_diarias()
 
