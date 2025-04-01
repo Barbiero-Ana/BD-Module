@@ -46,22 +46,3 @@ def listar_clientes():
     for cliente in clientes:
         print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
 
-if __name__ == "__main__":
-    while True:
-        print("\n1. Cadastrar Cliente\n2. Listar Clientes\n3. Sair")
-        opcao = input("Escolha uma opção: ")
-
-        if opcao == "1":
-            nome = input("Nome do cliente: ")
-            email = input("E-mail do cliente: ")
-            cadastrar_cliente(nome, email)
-
-        elif opcao == "2":
-            listar_clientes()
-
-        elif opcao == "3":
-            print("Saindo...")
-            break
-
-        else:
-            print("Opção inválida!")

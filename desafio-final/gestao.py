@@ -2,8 +2,6 @@ import sqlite3
 from emailsender import enviar_email_confirmacao
 
 
-
-
 def adicionar_prato(nome, preco):
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
