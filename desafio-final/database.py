@@ -4,7 +4,7 @@ def criar_banco():
     conexao = sqlite3.connect("restaurante.db")
     cursor = conexao.cursor()
 
-    # Tabela de usuários (gestor e atendente)
+    # usuarios (gestor e/ou atentente)
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,7 +15,7 @@ def criar_banco():
         )
     ''')
 
-    # Tabela de pratos
+    # pratos
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pratos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +24,7 @@ def criar_banco():
         )
     ''')
 
-    # Tabela de clientes
+    # cliente
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS clientes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +33,7 @@ def criar_banco():
         )
     ''')
 
-    # Tabela de vendas/pedidos
+    # pedidos
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS vendas_pedidos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +47,7 @@ def criar_banco():
         )
     ''')
 
-    # Tabela de cupons de desconto
+    # cupom desconto
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS cupons (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
