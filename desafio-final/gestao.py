@@ -176,7 +176,8 @@ def alterar_status_pedido():
     cursor = conexao.cursor()
 
     # 1️⃣ Buscar o cliente_id do pedido
-    cursor.execute("SELECT cliente_id, pratos, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
+    cursor.execute("SELECT cliente_id, prato_id, quantidade, total FROM vendas_pedidos WHERE id = ?", (pedido_id,))
+
     pedido = cursor.fetchone()
 
     if not pedido:

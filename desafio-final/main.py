@@ -53,6 +53,17 @@ def menu_gestor():
             gerar_relatorio_vendas()
 
         elif opcao == 5:
+            # Listar clientes
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            cursor.execute("SELECT * FROM clientes")
+            clientes = cursor.fetchall()
+            conexao.close()
+
+            print("\nLista de Clientes:")
+            for cliente in clientes:
+                print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
+
             cliente_id = int(input("ID do cliente: "))
             cupom_codigo = input("Código do cupom de desconto: ")
             cliente = buscar_cliente_por_id(cliente_id)
@@ -66,7 +77,7 @@ def menu_gestor():
             alterar_status_pedido()
 
         elif opcao == 8:
-            excluir_prato()
+            excluir_prato(prato_id)
 
         elif opcao == 9:
             print("Saindo...")
