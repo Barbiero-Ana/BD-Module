@@ -30,30 +30,3 @@ def login(email, senha):
 
 
 
-'''
-
-if __name__ == "__main__":
-    while True:
-        print("\n1. Cadastrar usuário\n2. Fazer login\n3. Sair")
-        opcao = input("Escolha uma opção: ")
-
-        if opcao == "1":
-            nome = input("Nome: ")
-            cargo = input("Cargo (gestor/atendente): ").strip().lower()
-            email = input("E-mail: ").strip()
-            senha = input("Senha: ")
-            cadastrar_usuario(nome, cargo, email, senha)
-        
-        elif opcao == "2":
-            email = input("E-mail: ").strip()
-            senha = input("Senha: ")
-            login(email, senha)
-
-        elif opcao == "3":
-            print("Saindo...")
-            break
-
-        else:
-            print("Opção inválida!")
-'
-'''

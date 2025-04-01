@@ -23,22 +23,38 @@ def registrar_pedido(cliente_id, pratos, quantidades):
     cursor = conexao.cursor()
 
     total_pedido = 0
+    pratos_nomes = []  # Para armazenar os nomes dos pratos para o e-mail
 
     for prato, quantidade in zip(pratos, quantidades):
-        cursor.execute("SELECT preco FROM pratos WHERE nome = ?", (prato,))
-        preco = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT id, preco FROM pratos WHERE nome = ?", (prato,))
+        resultado = cursor.fetchone()
+        if not resultado:
+            print(f"Prato '{prato}' não encontrado na tabela pratos.")
+            continue
+        prato_id, preco = resultado
         subtotal = preco * quantidade
         total_pedido += subtotal
+        pratos_nomes.append(prato)  
 
+        
         cursor.execute('''
             INSERT INTO vendas_pedidos (cliente_id, prato_id, quantidade, total, status)
             VALUES (?, ?, ?, ?, 'pendente')
-        ''', (cliente_id, prato, quantidade, subtotal))
+        ''', (cliente_id, prato_id, quantidade, subtotal))
 
     conexao.commit()
     conexao.close()
 
-    print(f"Pedido registrado para o cliente {cliente_id} com status 'pendente'.")
+    if pratos_nomes:  # Só enviar e-mail se pelo menos um prato foi registrado
+        
+        cliente = buscar_cliente_por_id(cliente_id)
+        if cliente:
+            enviar_email_confirmacao(cliente[2], pratos_nomes, quantidades, total_pedido)
+        print(f"Pedido registrado para o cliente {cliente_id} com status 'pendente'.")
+    else:
+        print("Nenhum prato válido foi registrado.")
+
     return total_pedido
 
 def enviar_email_confirmacao(email_cliente, pratos, quantidades, total):

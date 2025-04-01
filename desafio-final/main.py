@@ -14,9 +14,6 @@ senha_atendente = os.getenv('SENHA_ATENDENTE')
 
 
 
-
-
-
 # Função de login (gerente ou atendente)
 def login():
     print("Bem-vindo ao sistema de restaurante!")
@@ -34,7 +31,7 @@ def login():
 def menu_gestor():
     while True:
         print("\n1. Adicionar Prato\n2. Listar Pratos\n3. Atualizar Preço do Prato\n4. Gerar Relatório de Vendas\n5. Enviar Cupom de Desconto\n6. Listar Pedidos\n7. Alterar Status de Pedido\n8. Remover prato\n9. Sair")
-        opcao = int(input("Escolha uma opção: "))
+        opcao = int(input("\nEscolha uma opção: "))
 
         if opcao == 1:
             nome = input("Nome do prato: ")

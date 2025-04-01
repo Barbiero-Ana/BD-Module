@@ -162,7 +162,21 @@ def listar_pedidos():
 
 
 def alterar_status_pedido():
-    pedido_id = input("Digite o ID do pedido para alterar o status: ")
+
+    conexao = sqlite3.connect("restaurante.db")
+    cursor = conexao.cursor()
+    cursor.execute("SELECT id, cliente_id, total, status FROM vendas_pedidos")
+    pedidos = cursor.fetchall()
+    if pedidos:
+        print("\nPedidos registrados:")
+        for pedido in pedidos:
+            print(f"ID: {pedido[0]} | Cliente ID: {pedido[1]} | Total: R$ {pedido[2]:.2f} | Status: {pedido[3]}")
+    else:
+        print("Nenhum pedido registrado.")
+    conexao.close()
+
+
+    pedido_id = input("\nDigite o ID do pedido para alterar o status: ")
     
 
     try:
