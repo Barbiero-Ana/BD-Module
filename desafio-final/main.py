@@ -64,11 +64,43 @@ def menu_gestor():
             for cliente in clientes:
                 print(f"ID: {cliente[0]} | Nome: {cliente[1]} | E-mail: {cliente[2]}")
 
+            
             cliente_id = int(input("ID do cliente: "))
             cupom_codigo = input("Código do cupom de desconto: ")
+            try:
+                desconto = float(input("Valor do desconto (ex.: 10.0 para 10%): "))
+            except ValueError:
+                print("Valor de desconto inválido. Use um número (ex.: 10.0).")
+                continue
+
+            
             cliente = buscar_cliente_por_id(cliente_id)
-            if cliente:
-                enviar_email_cupom(cliente[2], cupom_codigo)
+            if not cliente:
+                print(f"Cliente com ID {cliente_id} não encontrado.")
+                continue
+
+            # Inserir o cupom no banco de dados
+            conexao = sqlite3.connect("restaurante.db")
+            cursor = conexao.cursor()
+            try:
+                cursor.execute('''
+                    INSERT INTO cupons (codigo, desconto, cliente_id)
+                    VALUES (?, ?, ?)
+                ''', (cupom_codigo, desconto, cliente_id))
+                conexao.commit()
+                print(f"Cupom '{cupom_codigo}' registrado no banco com sucesso!")
+            except sqlite3.IntegrityError:
+                print(f"Erro: O código de cupom '{cupom_codigo}' já existe. Use um código único.")
+                conexao.close()
+                continue
+            except Exception as e:
+                print(f"Erro ao registrar o cupom: {e}")
+                conexao.close()
+                continue
+            finally:
+                conexao.close()
+            enviar_email_cupom(cliente[2], cupom_codigo)
+
 
         elif opcao == 6:
             listar_pedidos()
