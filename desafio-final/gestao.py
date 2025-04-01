@@ -191,7 +191,7 @@ def alterar_status_pedido():
     
     if not resultado:
         print(f"Pedido com ID {pedido_id} não encontrado.")
-        # depuracao
+        # depuracao pra achar o maldito ERRO
         cursor.execute("SELECT id, cliente_id, prato_id, quantidade, total, status FROM vendas_pedidos WHERE id = ?", (pedido_id,))
         pedido = cursor.fetchone()
         if pedido:
@@ -205,7 +205,7 @@ def alterar_status_pedido():
         conexao.close()
         return
 
-    # Desempacotar 
+
     id_pedido, nome_cliente, email_cliente, nome_prato, quantidade, total, status = resultado
     print(f"Pedido encontrado: {nome_cliente} pediu {quantidade} de {nome_prato} (Status atual: {status})")
 

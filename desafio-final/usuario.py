@@ -9,27 +9,6 @@ def validar_email(email):
     padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(padrao, email) is not None
 
-def cadastrar_usuario(nome, cargo, email, senha):
-    if cargo not in ['gestor', 'atendente']:
-        print("Cargo inválido! Escolha entre 'gestor' ou 'atendente'.")
-        return
-    
-    if not validar_email(email):
-        print("E-mail inválido!")
-        return
-
-    conexao = sqlite3.connect("restaurante.db")
-    cursor = conexao.cursor()
-
-    try:
-        cursor.execute("INSERT INTO usuarios (nome, cargo, email, senha) VALUES (?, ?, ?, ?)", 
-                    (nome, cargo, email, hash_senha(senha)))
-        conexao.commit()
-        print(f"{cargo.capitalize()} cadastrado com sucesso!")
-    except sqlite3.IntegrityError:
-        print("Erro: E-mail já cadastrado.")
-    
-    conexao.close()
 
 def login(email, senha):
     conexao = sqlite3.connect("restaurante.db")
@@ -45,6 +24,13 @@ def login(email, senha):
     else:
         print("E-mail ou senha incorretos.")
         return None
+
+
+
+
+
+
+'''
 
 if __name__ == "__main__":
     while True:
@@ -69,3 +55,5 @@ if __name__ == "__main__":
 
         else:
             print("Opção inválida!")
+'
+'''
